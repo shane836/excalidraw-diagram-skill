@@ -144,8 +144,8 @@ def render(
         page.wait_for_function("window.__moduleReady === true", timeout=30000)
 
         # Inject the diagram data and render
-        json_str = json.dumps(data)
-        result = page.evaluate(f"window.renderDiagram({json_str})")
+        # Pass data as an argument to avoid JSON string interpolation in JS code
+        result = page.evaluate("(jsonData) => window.renderDiagram(jsonData)", data)
 
         if not result or not result.get("success"):
             error_msg = result.get("error", "Unknown render error") if result else "renderDiagram returned null"
